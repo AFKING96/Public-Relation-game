@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PR Quest — The Startup Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --card: #111827;
+    --card2: #1a2236;
+    --border: #1e2d45;
+    --blue: #3b82f6;
+    --blue2: #60a5fa;
+    --orange: #f97316;
+    --orange2: #fb923c;
+    --gray: #94a3b8;
+    --white: #f1f5f9;
+    --green: #22c55e;
+    --red: #ef4444;
+    --gold: #fbbf24;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Floating BG icons */
+  .bg-floaters {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .floater {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.07;
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.07; }
+    90%  { opacity: 0.07; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* === SCREENS === */
+  .screen { display: none; position: relative; z-index: 1; }
+  .screen.active { display: flex; }
+
+  /* ---- INTRO ---- */
+  #intro {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 2rem;
+  }
+  .intro-badge {
+    background: linear-gradient(135deg, #1e3a5f, #0f2240);
+    border: 1px solid var(--blue);
+    border-radius: 50px;
+    padding: .4rem 1.2rem;
+    font-size: .75rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--blue2);
+    margin-bottom: 2rem;
+    animation: fadeDown .6s ease both;
+  }
+  .intro-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 800;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--blue2), var(--orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeDown .7s .1s ease both;
+    margin-bottom: .5rem;
+  }
+  .intro-tagline {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    color: var(--gray);
+    max-width: 500px;
+    animation: fadeDown .8s .2s ease both;
+    margin-bottom: 3rem;
+  }
+  .name-input-wrap {
+    animation: fadeDown .9s .3s ease both;
+    margin-bottom: 2rem;
+    width: 100%; max-width: 360px;
+  }
+  .name-input-wrap label {
+    display: block;
+    font-size: .85rem;
+    color: var(--gray);
+    margin-bottom: .5rem;
+    text-align: left;
+    letter-spacing: .05em;
+  }
+  .name-input-wrap input {
+    width: 100%;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: .9rem 1.2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    color: var(--white);
+    outline: none;
+    transition: border-color .2s;
+  }
+  .name-input-wrap input:focus { border-color: var(--blue); }
+  .btn-start {
+    animation: fadeDown 1s .4s ease both;
+    background: linear-gradient(135deg, var(--blue), var(--orange));
+    border: none;
+    border-radius: 14px;
+    padding: 1rem 3rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 0 40px rgba(59,130,246,.3);
+  }
+  .btn-start:hover { transform: translateY(-2px); box-shadow: 0 0 60px rgba(59,130,246,.5); }
+  .intro-stats {
+    display: flex; gap: 2rem; margin-top: 3rem;
+    animation: fadeDown 1.1s .5s ease both;
+  }
+  .stat-pill {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: .6rem 1.2rem;
+    text-align: center;
+  }
+  .stat-pill .num { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--blue2); }
+  .stat-pill .lbl { font-size: .7rem; color: var(--gray); letter-spacing: .08em; }
+
+  /* ---- TRANSITION ---- */
+  #transition {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 2rem;
+  }
+  .trans-emoji { font-size: 5rem; animation: popIn .5s cubic-bezier(.175,.885,.32,1.275); margin-bottom: 1.5rem; }
+  .trans-level { font-family: 'Syne', sans-serif; font-size: .85rem; font-weight: 700; color: var(--orange); letter-spacing: .2em; text-transform: uppercase; margin-bottom: .5rem; }
+  .trans-title { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem,5vw,3rem); font-weight: 800; margin-bottom: 1rem; }
+  .trans-quote {
+    background: var(--card2);
+    border-left: 3px solid var(--orange);
+    border-radius: 0 12px 12px 0;
+    padding: 1rem 1.5rem;
+    max-width: 500px;
+    font-style: italic;
+    color: var(--gray);
+    margin-bottom: 2.5rem;
+  }
+  .trans-bar-wrap { width: 300px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 2rem; }
+  .trans-bar { height: 100%; background: linear-gradient(90deg, var(--blue), var(--orange)); width: 0; transition: width 2s ease; border-radius: 2px; }
+
+  /* ---- QUIZ ---- */
+  #quiz {
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 1.5rem;
+    max-width: 760px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .quiz-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;
+  }
+  .progress-track {
+    display: flex; gap: .5rem; align-items: center;
+  }
+  .evo-stage {
+    font-size: 1.6rem;
+    filter: grayscale(1) opacity(.3);
+    transition: all .3s;
+  }
+  .evo-stage.active {
+    filter: grayscale(0) opacity(1);
+    animation: popIn .4s cubic-bezier(.175,.885,.32,1.275);
+  }
+  .score-pill {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: .4rem 1rem;
+    font-family: 'Syne', sans-serif;
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .timer-pill {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: .4rem 1rem;
+    font-family: 'Syne', sans-serif;
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--blue2);
+    min-width: 60px;
+    text-align: center;
+  }
+  .timer-pill.urgent { color: var(--red); animation: pulse .5s infinite; }
+
+  .section-label {
+    font-size: .75rem;
+    color: var(--orange);
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: .3rem;
+  }
+  .q-counter {
+    font-family: 'Syne', sans-serif;
+    font-size: .9rem;
+    color: var(--gray);
+    margin-bottom: .5rem;
+  }
+  .q-progress-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 2rem; }
+  .q-progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--orange)); transition: width .4s ease; }
+
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    animation: slideUp .35s ease;
+  }
+  .q-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+  .q-text {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--white);
+  }
+
+  .options-grid {
+    display: grid;
+    gap: .75rem;
+  }
+  .option-btn {
+    background: var(--card2);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 1rem 1.3rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all .18s;
+    display: flex; align-items: center; gap: 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .95rem;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--blue);
+    background: #162035;
+    transform: translateX(4px);
+  }
+  .option-btn .opt-letter {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: .85rem;
+    flex-shrink: 0;
+    transition: all .18s;
+  }
+  .option-btn:hover:not(:disabled) .opt-letter { background: var(--blue); }
+  .option-btn.correct {
+    border-color: var(--green);
+    background: rgba(34,197,94,.1);
+    animation: correctFlash .4s ease;
+  }
+  .option-btn.correct .opt-letter { background: var(--green); }
+  .option-btn.wrong {
+    border-color: var(--red);
+    background: rgba(239,68,68,.1);
+    animation: wrongShake .4s ease;
+  }
+  .option-btn.wrong .opt-letter { background: var(--red); }
+  .option-btn:disabled { cursor: default; }
+  .opt-feedback { margin-left: auto; font-size: 1.2rem; }
+
+  .feedback-box {
+    border-radius: 14px;
+    padding: 1rem 1.3rem;
+    margin-top: 1rem;
+    font-size: .9rem;
+    display: none;
+    animation: fadeDown .3s ease;
+  }
+  .feedback-box.show { display: block; }
+  .feedback-box.correct-fb { background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.3); color: #86efac; }
+  .feedback-box.wrong-fb { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); color: #fca5a5; }
+
+  .btn-next {
+    background: linear-gradient(135deg, var(--blue), var(--blue2));
+    border: none;
+    border-radius: 12px;
+    padding: .85rem 2rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    transition: all .15s;
+    margin-top: 1.5rem;
+    display: none;
+    width: 100%;
+  }
+  .btn-next.show { display: block; }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(59,130,246,.4); }
+
+  /* ---- END ---- */
+  #end {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+  }
+  .confetti-piece {
+    position: fixed;
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    animation: confettiFall linear forwards;
+    z-index: 100;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+  .badge-ring {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--orange));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem;
+    margin: 0 auto 1.5rem;
+    animation: popIn .6s cubic-bezier(.175,.885,.32,1.275) .2s both;
+    box-shadow: 0 0 60px rgba(59,130,246,.4), 0 0 120px rgba(249,115,22,.2);
+  }
+  .end-name {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.6rem,5vw,2.5rem);
+    font-weight: 800;
+    animation: fadeDown .6s .4s both;
+    margin-bottom: .3rem;
+  }
+  .end-badge-title {
+    background: linear-gradient(135deg, var(--gold), var(--orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    animation: fadeDown .6s .5s both;
+    margin-bottom: 2rem;
+  }
+  .end-score-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 420px;
+    width: 100%;
+    animation: fadeDown .6s .6s both;
+    margin-bottom: 2rem;
+  }
+  .end-big-score {
+    font-family: 'Syne', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--blue2), var(--orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: .3rem;
+  }
+  .end-score-sub { color: var(--gray); font-size: .9rem; margin-bottom: 1.5rem; }
+  .end-breakdown {
+    display: flex; gap: 1rem; justify-content: center;
+  }
+  .breakdown-item { text-align: center; }
+  .breakdown-num { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--blue2); }
+  .breakdown-lbl { font-size: .7rem; color: var(--gray); }
+  .end-icons { font-size: 2rem; letter-spacing: .5rem; animation: fadeDown .6s .7s both; margin-bottom: 2rem; }
+  .end-buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; animation: fadeDown .6s .8s both; }
+  .btn-replay, .btn-share {
+    border-radius: 12px;
+    padding: .85rem 1.8rem;
+    font-family: 'Syne', sans-serif;
+    font-size: .95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .15s;
+    border: none;
+  }
+  .btn-replay { background: linear-gradient(135deg, var(--blue), var(--orange)); color: #fff; }
+  .btn-share { background: var(--card2); border: 1px solid var(--border); color: var(--white); }
+  .btn-replay:hover, .btn-share:hover { transform: translateY(-2px); }
+
+  /* Animations */
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes slideUp  { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes popIn    { from { opacity: 0; transform: scale(.5); } to { opacity: 1; transform: scale(1); } }
+  @keyframes pulse    { 0%,100% { opacity: 1; } 50% { opacity: .5; } }
+  @keyframes correctFlash { 0%,100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+  @keyframes wrongShake { 0%,100% { transform: translateX(0); } 25%,75% { transform: translateX(-6px); } 50% { transform: translateX(6px); } }
+
+  .sections-grid {
+    display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 400px;
+    animation: fadeDown .6s .2s both;
+  }
+  .btn-section {
+    background: var(--card2);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 1rem;
+    display: flex; align-items: center; gap: 1.5rem;
+    cursor: pointer; transition: all .2s;
+    color: var(--white); text-align: left;
+  }
+  .btn-section:hover {
+    border-color: var(--blue); transform: translateX(5px);
+    background: #162035;
+  }
+  .sec-icon {
+    font-size: 2rem; background: var(--card); border-radius: 12px; width: 50px; height: 50px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sec-info h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; margin-bottom: 0.2rem; }
+  .sec-info p { font-size: 0.8rem; color: var(--gray); }
+
+  .btn-home {
+    position: fixed; top: 15px; left: 15px; z-index: 100;
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0.5rem 1rem;
+    color: var(--white); font-family: 'Syne', sans-serif; font-weight: 600; font-size: 0.85rem;
+    cursor: pointer; transition: all .15s;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .btn-home:hover { background: var(--border); transform: scale(1.05); }
+</style>
+</head>
+<body>
+
+<button class="btn-home" onclick="goHome()">🏠 Home</button>
+
+<div class="bg-floaters" id="bgFloaters"></div>
+
+<!-- INTRO -->
+<div class="screen active" id="intro">
+  <div class="intro-badge">🚀 PR Quest · College Edition</div>
+  <div class="intro-logo">PR QUEST</div>
+  <p class="intro-tagline">Test your Public Relations knowledge through an epic startup journey. Answer fast, think smart, and earn your badge.</p>
+  <button class="btn-start" onclick="startGame()">Launch Your Journey 🚀</button>
+  <div class="intro-stats">
+    <div class="stat-pill"><div class="num">89</div><div class="lbl">Questions</div></div>
+    <div class="stat-pill"><div class="num">4</div><div class="lbl">Sections</div></div>
+    <div class="stat-pill"><div class="num">🏅</div><div class="lbl">Badge Waiting</div></div>
+  </div>
+</div>
+
+<!-- SECTION SELECT -->
+<div class="screen" id="section-select" style="flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 2rem;">
+  <div class="intro-logo" style="font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 0.2rem;">SELECT MISSION</div>
+  <p class="intro-tagline" style="margin-bottom: 2rem;">Choose your challenge</p>
+  <div class="sections-grid">
+    <button class="btn-section" onclick="startSection(0)"><div class="sec-icon">💼</div><div class="sec-info"><h3>Section 1</h3><p>17 Questions</p></div></button>
+    <button class="btn-section" onclick="startSection(1)"><div class="sec-icon">📈</div><div class="sec-info"><h3>Section 2</h3><p>16 Questions</p></div></button>
+    <button class="btn-section" onclick="startSection(2)"><div class="sec-icon">🔧</div><div class="sec-info"><h3>Section 3</h3><p>21 Questions</p></div></button>
+    <button class="btn-section" onclick="startSection(3)"><div class="sec-icon">🏆</div><div class="sec-info"><h3>Section 4</h3><p>35 Questions</p></div></button>
+  </div>
+</div>
+
+<!-- TRANSITION -->
+<div class="screen" id="transition">
+  <div class="trans-emoji" id="transEmoji">💼</div>
+  <div class="trans-level" id="transLevel">Section 1</div>
+  <div class="trans-title" id="transTitle">The Foundations</div>
+  <div class="trans-quote" id="transQuote">"A brand is what people say about you when you're not in the room."</div>
+  <div class="trans-bar-wrap"><div class="trans-bar" id="transBar"></div></div>
+  <button class="btn-start" id="transBtn" onclick="goToQuiz()">I'm Ready →</button>
+</div>
+
+<!-- QUIZ -->
+<div class="screen" id="quiz">
+  <div class="quiz-header">
+    <div class="progress-track">
+      <span class="evo-stage active" id="evo0">🪫</span>
+      <span class="evo-stage" id="evo1">⚙️</span>
+      <span class="evo-stage" id="evo2">🔧</span>
+      <span class="evo-stage" id="evo3">🚀</span>
+      <span class="evo-stage" id="evo4">🌍</span>
+    </div>
+    <div class="score-pill">⭐ <span id="scoreDisp">0</span></div>
+    <div class="timer-pill" id="timerDisp">20</div>
+  </div>
+
+  <div class="section-label" id="sectionLabel">Section 1 · Foundations</div>
+  <div class="q-counter" id="qCounter">Question 1 of 17</div>
+  <div class="q-progress-bar"><div class="q-progress-fill" id="qProgressFill" style="width:0%"></div></div>
+
+  <div class="question-card">
+    <div class="q-icon" id="qIcon">🤔</div>
+    <div class="q-text" id="qText">Loading...</div>
+  </div>
+
+  <div class="options-grid" id="optionsGrid"></div>
+  <div class="feedback-box" id="feedbackBox"></div>
+  <button class="btn-next" id="btnNext" onclick="nextQuestion()">Next Question →</button>
+</div>
+
+<!-- END -->
+<div class="screen" id="end">
+  <div class="badge-ring">🏅</div>
+  <div class="end-name" id="endName">You Did It!</div>
+  <div class="end-badge-title">🚀 Future Entrepreneur 📊</div>
+  <div class="end-score-card">
+    <div class="end-big-score" id="endScore">0/89</div>
+    <div class="end-score-sub" id="endSubLabel">Questions Answered Correctly</div>
+    <div class="end-breakdown" id="endBreakdown">
+      <div class="breakdown-item"><div class="breakdown-num" id="bdS1">0</div><div class="breakdown-lbl">Section 1</div></div>
+      <div class="breakdown-item"><div class="breakdown-num" id="bdS2">0</div><div class="breakdown-lbl">Section 2</div></div>
+      <div class="breakdown-item"><div class="breakdown-num" id="bdS3">0</div><div class="breakdown-lbl">Section 3</div></div>
+      <div class="breakdown-item"><div class="breakdown-num" id="bdS4">0</div><div class="breakdown-lbl">Section 4</div></div>
+    </div>
+  </div>
+  <div class="end-icons">💼 💡 📈</div>
+  <div class="end-buttons">
+    <button class="btn-replay" onclick="replayGame()">🔄 Play Again</button>
+    <button class="btn-share" onclick="shareResult()">📤 Share Result</button>
+  </div>
+</div>
+
+<div style="position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--white); background: rgba(10, 14, 26, 0.85); border: 1px solid var(--border); border-radius: 20px; padding: 0.5rem 1.5rem; backdrop-filter: blur(4px); z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.5); letter-spacing: 0.05em;">
+  Made by AF
+</div>
+
+<script>
+// ===== DATA =====
+const sections = [
+  {
+    id: 1, label: "Section 1 · Foundations", title: "The Foundations",
+    emoji: "💼", quote: '"A brand is what people say about you when\'t in the room." — Jeff Bezos',
+    questions: [
+      { icon:"🤔", text:"What is the primary purpose of Public Relations (PR)?", options:["Selling products directly to customers","Managing the reputation and communication between an organization and its public","Controlling the media for promotional purposes","Creating advertisements for brands"], correct:1 },
+      { icon:"📢", text:"Which best defines Public Relations (PR)?", options:["The practice of using paid media to promote products","The strategic communication process that builds mutually beneficial relationships between organizations and their publics","The process of selling goods and services through mass media","The study of consumer behavior and marketing tactics"], correct:1 },
+      { icon:"🏛️", text:"Early PR practices in ancient civilizations mainly relied on:", options:["Television advertisements","Social media campaigns","Oral persuasion by leaders","Printed newspapers"], correct:2 },
+      { icon:"🎯", text:"The main goal of early PR in ancient times was to:", options:["Increase product sales","Influence public opinion and maintain unity","Promote online services","Compete with other companies"], correct:1 },
+      { icon:"📰", text:"The Print Revolution contributed to PR development by:", options:["Eliminating oral communication","Expanding communication through written materials","Replacing newspapers with radio","Introducing artificial intelligence"], correct:1 },
+      { icon:"📻", text:"In the 20th century, PR expanded significantly due to the rise of:", options:["Stone carvings","Broadcast media","Handwritten letters","Town meetings"], correct:1 },
+      { icon:"🏺", text:"Greek philosophers contributed to public relations through the development of:", options:["Printing machines","Social media platforms","Persuasive communication techniques","Television broadcasting"], correct:2 },
+      { icon:"⚔️", text:"Roman leaders influenced public opinion primarily through:", options:["Online campaigns","Hieroglyphic writing","Speeches and public forums","Printed newspapers"], correct:2 },
+      { icon:"📜", text:"PR practices before the 18th century were mainly focused on:", options:["Digital marketing","Political, religious, and social influence","E-commerce development","Artificial intelligence tools"], correct:1 },
+      { icon:"💼", text:"Public Relations (PR) is best defined as:", options:["Paid advertising to increase sales","Strategic management of communication","Direct selling to customers","Internal employee training"], correct:1 },
+      { icon:"🎯", text:"The primary goal of PR is to:", options:["Increase production capacity","Reduce employee workload","Build mutually beneficial relationships with the public","Eliminate competitors"], correct:2 },
+      { icon:"📊", text:"Public Relations mainly focuses on shaping:", options:["Manufacturing processes","Public perception and brand reputation","Product pricing","Office management"], correct:1 },
+      { icon:"🛡️", text:"PR handles crisis communication to:", options:["Increase advertising costs","Protect and manage an organization's reputation","Replace marketing strategies","Promote paid sponsorships"], correct:1 },
+      { icon:"🌐", text:"According to PRSA, public relations is primarily about:", options:["Selling products directly to customers","Influencing, engaging, and building relationships with stakeholders","Reducing organizational costs","Managing only internal communication"], correct:1 },
+      { icon:"🔍", text:"PRSA emphasizes shaping and framing the public perception of:", options:["Government policies only","Media organizations","An organization","Competitors"], correct:2 },
+      { icon:"⚠️", text:"Crisis communication is important in PR because it:", options:["Increases advertising revenue","Helps manage and protect reputation during difficult situations","Eliminates competition","Focuses only on sales growth"], correct:1 },
+      { icon:"⚙️", text:"Which is considered a core function of public relations?", options:["Product manufacturing","Media relations","Financial auditing","Inventory control"], correct:1 }
+    ]
+  },
+  {
+    id: 2, label: "Section 2 · Strategy", title: "Strategic PR",
+    emoji: "📈", quote: '"Strategy without tactics is the slowest route to victory." — Sun Tzu',
+    questions: [
+      { icon:"💼", text:"Public Relations (PR) is mainly concerned with:", options:["Selling products directly","Managing communication and relationships with the public","Increasing company profits only","Designing advertisements"], correct:1 },
+      { icon:"🤝", text:"The main goal of Public Relations is to build:", options:["Competitive pricing","Internal communication only","Mutually beneficial relationships between organizations and the public","Sales promotions"], correct:2 },
+      { icon:"📰", text:"PR differs from advertising because PR mainly relies on:", options:["Paid promotion","Unpaid and earned media","Direct selling","Discount campaigns"], correct:1 },
+      { icon:"🌟", text:"Public Relations helps organizations to:", options:["Control manufacturing processes","Shape public perception and manage reputation","Reduce employee salaries","Replace marketing departments"], correct:1 },
+      { icon:"🏛️", text:"According to PRSA, public relations mainly focuses on:", options:["Increasing product prices","Influencing and engaging stakeholders","Reducing advertising costs","Managing employee salaries"], correct:1 },
+      { icon:"🎯", text:"Public relations aims to shape and frame the public perception of:", options:["Government only","Customers only","An organization","Competitors"], correct:2 },
+      { icon:"⚙️", text:"Which is considered a function of public relations?", options:["Product manufacturing","Crisis communication","Accounting","Inventory control"], correct:1 },
+      { icon:"📡", text:"PR practices help organizations communicate with stakeholders through:", options:["One platform only","Traditional media only","Numerous platforms","Advertising agencies only"], correct:2 },
+      { icon:"📊", text:"Strategic alignment in PR means that PR activities should:", options:["Focus only on media coverage","Align with broader organizational goals","Replace marketing activities","Focus only on social media"], correct:1 },
+      { icon:"💰", text:"Demonstrating Return on Investment (ROI) in PR means:", options:["Showing the financial and strategic value of PR activities","Reducing the number of employees","Increasing advertising budgets","Eliminating communication channels"], correct:0 },
+      { icon:"🪑", text:"The phrase 'seat at the table' in PR management means:", options:["PR professionals attend company meetings only","PR has no role in decision making","PR participates in decision-making before policies or products are created","PR focuses only on crisis communication"], correct:2 },
+      { icon:"👥", text:"Stakeholder management in PR involves:", options:["Managing only employees","Managing relationships with individuals or groups affected by the organization","Managing company finances","Managing production processes"], correct:1 },
+      { icon:"🧠", text:"'Business People First, Communicators Second' means PR professionals should:", options:["Focus only on communication skills","Focus only on marketing","Think strategically about business results","Ignore organizational goals"], correct:2 },
+      { icon:"🏆", text:"Public relations is considered:", options:["Only a communication tool","A strategic management function","A financial department","A production process"], correct:1 },
+      { icon:"📈", text:"Demonstrating ROI in PR means:", options:["Showing the value and results of PR activities","Increasing product prices","Hiring more employees","Reducing communication channels"], correct:0 },
+      { icon:"🔭", text:"Proactive issues tracking in PR helps organizations to:", options:["Increase product costs","Prevent crises and identify opportunities","Avoid communication with stakeholders","Reduce marketing activities"], correct:1 }
+    ]
+  },
+  {
+    id: 3, label: "Section 3 · Advanced", title: "Trust & Stakeholders",
+    emoji: "🔧", quote: '"Trust is the glue of life. It\'s the foundational principle that holds all relationships." — Covey',
+    questions: [
+      { icon:"🎨", text:"What is the role of PR in unified brand messaging?", options:["Creating random advertisements","Crafting consistent messaging aligned with the brand's mission","Reducing communication with audiences","Ignoring brand identity"], correct:1 },
+      { icon:"📈", text:"PR strengthens market positioning mainly by:", options:["Reducing media exposure","Increasing product prices","Boosting visibility and reputation","Limiting brand communication"], correct:2 },
+      { icon:"🌟", text:"Which contributes to enhanced market positioning?", options:["Media coverage and thought leadership","Ignoring public opinion","Decreasing communication channels","Avoiding brand storytelling"], correct:0 },
+      { icon:"🚀", text:"PR helps brands stand out in the market through:", options:["Limited communication","Media coverage and strategic communication","Avoiding interaction with media","Eliminating brand identity"], correct:1 },
+      { icon:"🤝", text:"Trust in business is described as:", options:["Only a moral concept","A valuable business asset that affects efficiency","An unnecessary factor in organizations","A marketing tool only"], correct:1 },
+      { icon:"⚡", text:"According to Stephen Covey, 'The Speed of Trust' means:", options:["Trust slows communication","Trust makes communication faster and more efficient","Trust has no effect on communication","Trust increases conflict"], correct:1 },
+      { icon:"💬", text:"In a high-trust relationship:", options:["People misunderstand every message","Communication becomes difficult","People understand the intended meaning even if the wrong thing is said","Messages must always be extremely detailed"], correct:2 },
+      { icon:"🐌", text:"In a low-trust environment, communication becomes:", options:["Fast and easy","Slow and expensive","Short and simple","Unnecessary"], correct:1 },
+      { icon:"🎯", text:"The strategic role of PR in stakeholder engagement focuses on:", options:["Ignoring stakeholders' opinions","Building long-term relationships with key stakeholders","Limiting communication with the public","Focusing only on advertising"], correct:1 },
+      { icon:"🔗", text:"Strategic stakeholder engagement aims to:", options:["Reduce communication with stakeholders","Align public perception with organizational goals","Eliminate stakeholder influence","Focus only on internal communication"], correct:1 },
+      { icon:"⚙️", text:"One important role of PR in organizations is:", options:["Avoiding public communication","Managing crises and emerging issues","Ignoring public reactions","Eliminating stakeholder relationships"], correct:1 },
+      { icon:"🛡️", text:"Risk mitigation in public relations means:", options:["Creating conflicts with the public","Anticipating public reactions and managing communication","Avoiding communication during crises","Ignoring emerging issues"], correct:1 },
+      { icon:"🗂️", text:"Effective stakeholder management begins with:", options:["Ignoring stakeholder opinions","Identifying and categorizing stakeholders","Reducing communication with stakeholders","Focusing only on internal employees"], correct:1 },
+      { icon:"📊", text:"Stakeholders are usually categorized based on:", options:["Age and gender","Interest, influence, and expectations","Location only","Financial status only"], correct:1 },
+      { icon:"🔄", text:"Two-way communication helps organizations to:", options:["Avoid stakeholders","Build trust and manage potential conflicts","Eliminate stakeholder influence","Reduce transparency"], correct:1 },
+      { icon:"💬", text:"Trust between organizations and stakeholders is strengthened through:", options:["Ignoring feedback","Continuous dialogue and communication","Avoiding interaction","Sending messages without responses"], correct:1 },
+      // Case study
+      { icon:"🏪", text:"[Case Study] What was the primary PR challenge Fresh Bites faced?", options:["Low sales due to poor marketing","Negative customer reviews about taste","A viral social media claim about harmful chemicals in their products","A failed advertising campaign"], correct:2 },
+      { icon:"1️⃣", text:"[Case Study] What was the FIRST step the PR team took to manage the crisis?", options:["Ignored the issue, hoping it would fade away","Issued a public statement addressing customer concerns","Filed a lawsuit against the person who posted the claim","Released new products to distract customers"], correct:1 },
+      { icon:"🔬", text:"[Case Study] Why did Fresh Bites involve independent food safety experts?", options:["To provide credibility and transparency in their response","To silence critics with legal action","To create confusion among consumers","To shift blame onto suppliers"], correct:0 },
+      { icon:"📲", text:"[Case Study] Which PR strategy did Fresh Bites use to directly engage with concerned customers?", options:["Avoiding social media interactions","Holding social media Q&A sessions","Running a negative campaign against competitors","Launching new advertisements without addressing the issue"], correct:1 },
+      { icon:"💡", text:"[Case Study] What is the key PR lesson from this case study?", options:["Transparency and proactive communication help rebuild trust","Avoiding customer complaints can prevent negative press","Lawsuits are the best way to handle misinformation","Social media should never be used for PR crisis management"], correct:0 }
+    ]
+  },
+  {
+    id: 4, label: "Section 4 · The Final Test", title: "Comprehensive Review",
+    emoji: "🏆", quote: '"Public relations helps an organization and its publics adapt mutually to each other." — PRSA',
+    questions: [
+      { icon:"🏛️", text:"Who ushered in the 'Public Information Age' with his 'Declaration of Principles' focusing on truth and accuracy?", options:["Edward L. Bernays","Ivy Lee","John Marston","Thomas Paine"], correct:1 },
+      { icon:"🔬", text:"Which historical PR figure applied social science and psychology to tap into audience needs?", options:["Ivy Lee","Buffalo Bill","Edward L. Bernays","Stephen Covey"], correct:2 },
+      { icon:"🎭", text:"The 'Age of the Press Agent' in the late 1800s was heavily characterized by:", options:["Two-way symmetrical communication","Intentional exaggeration and hype to build legends","Scientific persuasion based on psychology","The development of the RACE model"], correct:1 },
+      { icon:"📝", text:"In the RACE model of planning, the 'A' stands for:", options:["Audience","Action Planning","Analytics","Advertising"], correct:1 },
+      { icon:"🌀", text:"Why is the RACE model often viewed as a 'spiral' process?", options:["Because campaigns tend to spin out of control quickly","Because the evaluation from one campaign continuously informs the research for the next","Because it is impossible to set clear objectives","Because tactics are more important than strategy"], correct:1 },
+      { icon:"🐌", text:"According to Stephen Covey, what is the main consequence of a 'low-trust' environment created by spin?", options:["Communication becomes highly efficient","Audiences completely ignore the brand","Communication becomes slow and expensive due to suspicion","Stock prices immediately double"], correct:2 },
+      { icon:"🎯", text:"According to the course materials, which of the following is NOT an emphasis of modern Public Relations?", options:["Shaping and framing public perception","Engaging and building relationships with stakeholders","Selling products directly to consumers through mass media ads","Demonstrating measurable ROI to senior management"], correct:2 },
+      { icon:"📜", text:"How was PR communication primarily practiced in ancient Egypt?", options:["Through television campaigns","By using hieroglyphic inscriptions to promote rulers' achievements","Focusing exclusively on corporate social responsibility","Through modern press conferences"], correct:1 },
+      { icon:"🗞️", text:"What profound impact did the 'Print Revolution' have on early PR development?", options:["It made communication strictly oral","It ended the influence of religious doctrines","It enabled mass distribution of written material, unlocking broad societal engagement","It replaced the need for political speeches"], correct:2 },
+      { icon:"⚖️", text:"A hallmark of the 'Relationship Building' phase (1950s/60s) in PR is the shift toward:", options:["The Two-Way Symmetric Model, aiming for balanced, mutual adjustments","Mass email marketing","A focus purely on one-way persuasion","Press agentry and celebrity promotion"], correct:0 },
+      { icon:"💰", text:"Fundamentally, how does Public Relations primarily distinguish itself from advertising?", options:["PR is only used during a crisis","PR strictly targets government officials","PR primarily utilizes unpaid, earned media to build reputation","PR guarantees immediate product sales"], correct:2 },
+      { icon:"📈", text:"In modern PR, demonstrating Return on Investment (ROI) is crucial. This refers to:", options:["Increasing the budget for advertising campaigns","Proving the financial and strategic value of PR efforts using clear metrics","Reducing the number of communication platforms used","Relying on hype instead of transparency"], correct:1 },
+      { icon:"🎯", text:"During which stage of the RACE model should PR professionals establish SMART objectives?", options:["Research stage","Communication execution","Evaluation stage","Action Planning"], correct:3 },
+      { icon:"📊", text:"To assess campaign effectiveness, PR practitioners measure different types of metrics, which are:", options:["Output, Outtake, and Outcome","Income, Expenses, and Profit","Internal, External, and Mediated","Age, Gender, and Location"], correct:0 },
+      { icon:"🌐", text:"What is 'Integrated Marketing Communications' (IMC) in the modern era?", options:["Removing marketing from organizational strategy","Relying purely on classic PR tactics","Combining public relations, advertising, and marketing for consistent messaging","Isolating digital media from broadcast media"], correct:2 },
+      { icon:"🛡️", text:"The flawed practice of 'Barrier' public relations involves:", options:["Engaging stakeholders proactively","Using spin to protect the organization and avoid taking responsibility","Working collaboratively with activists","Establishing clear evaluation metrics"], correct:1 },
+      { icon:"🪑", text:"What does it mean for a PR professional to have a 'seat at the table'?", options:["They plan company cafeterias","They attend media banquets regularly","They influence senior management decisions proactively before policies are formed","They only step in when a crisis goes public"], correct:2 },
+      { icon:"💼", text:"The 'Business Emphasis' stage of PR stresses that professionals should consider themselves:", options:["Designers first, managers second","Businesspeople first, and communicators second","Journalists first, executives second","Spokespeople entirely disconnected from finance"], correct:1 },
+      { icon:"🎖️", text:"Which historical entity successfully persuaded Americans to support World War I, marking a test of governmental PR?", options:["The PRSA committee","The Creel Committee","The Bernays Organization","The Roman Senate"], correct:1 },
+      { icon:"📱", text:"How has the 21st-century digital landscape transformed public relations?", options:["It relies less on transparency than print media","Organizations can now bypass traditional gatekeepers and have transparent, direct conversations","It forces PR to be purely reactive","It has eliminated the need for tracking reputation"], correct:1 },
+
+      { icon:"⚖️", text:"True or False: Modern stakeholders demand less transparency and are solely concerned with product prices.", options:["True","False"], correct:1 },
+      { icon:"🗣️", text:"True or False: The 'Two-Way Asymmetric Model' sought feedback from publics, but its primary goal was still effective persuasion rather than mutual adjustment.", options:["True","False"], correct:0 },
+      { icon:"⚠️", text:"True or False: The course materials indicate that 'Spin' is a productive strategy to weather a crisis without harming long-term credibility.", options:["True","False"], correct:1 },
+      { icon:"🔄", text:"True or False: In the RACE model, the Evaluation step enables real-time adjustments and continuous organizational learning.", options:["True","False"], correct:0 },
+      { icon:"👥", text:"True or False: In public relations, 'stakeholders' are strictly defined as the financial investors holding shares in a company.", options:["True","False"], correct:1 },
+      { icon:"🔭", text:"True or False: Strategic PR incorporates proactive planning, actively tracking issues to prevent them from escalating into future crises.", options:["True","False"], correct:0 },
+      { icon:"🌟", text:"True or False: Securing third-party endorsements from journalists and influencers is considered an authentic way to enhance public perception.", options:["True","False"], correct:0 },
+      { icon:"🔍", text:"True or False: The main purpose of the 'Research Stage' in the RACE model is to immediately execute communication tactics to the audience.", options:["True","False"], correct:1 },
+      { icon:"🛡️", text:"True or False: According to the PR as a Management Function approach, PR is primarily reactive and only begins working after a crisis hits.", options:["True","False"], correct:1 },
+      { icon:"🤝", text:"True or False: The 'Speed of Trust' suggests that in a high-trust relationship, audiences usually understand your intended meaning even if communication is slightly flawed.", options:["True","False"], correct:0 },
+
+      { icon:"🚨", text:"[Scenario] A tech company discovers a hidden flaw in their new software. Based on modern relationship-building PR principles, what should management do?", options:["Use spin to minimize the issue's severity in the press","Quietly fix the software without telling users to maintain reputation","Proactively announce the issue, apologize, and provide a transparent timeline for a fix","Blame the issue on a third-party supplier to deflect anger"], correct:2 },
+      { icon:"📉", text:"[Scenario] A brand's sales have dropped and the CEO wants to launch a huge advertising blitz immediately. Applying the RACE model, what should the PR director recommend first?", options:["Approve the ads instantly to save the market share","Conduct situational and audience research before taking any action","Issue a press release stating sales are higher than ever","Ignore the CEO and start evaluating past campaigns"], correct:1 },
+      { icon:"🌐", text:"[Scenario] During a rapidly evolving cyber crisis, rumors spread on social media that your factory is polluting a local river. What is the most effective PR response?", options:["Do nothing and hope the rumors pass naturally over time","Use digital platforms to swiftly share verified, accurate data directly addressing public concerns","Send legal threats to every person sharing the rumor","Shut down all company social media accounts immediately"], correct:1 },
+      { icon:"🎯", text:"[Scenario] A startup's PR team is planning a product launch for young adults. Based on effective communication execution, how should they reach this demographic?", options:["Buy massive front-page ads in traditional newspapers only","Select channels based on audience habits, like influencer partnerships and social platforms","Send mass physical mailers to random households","Only draft a standard press release and wait"], correct:1 },
+      { icon:"✊", text:"[Scenario] An organization faces heavy activist pressure regarding labor practices. Referencing the 'Two-Way Symmetric Model', what is the strategic PR approach?", options:["Listen to activists and adjust corporate policies to meet mutual needs while keeping dialogue balanced","Run a campaign attacking the activists' credibility","Use psychological methods to persuade the public that activists are lying","Ignore them, since they are not paying customers"], correct:0 }
+    ]
+  }
+];
+
+const tips = {
+  correct: [
+    "🎯 Nailed it! PR is all about strategic communication.",
+    "⚡ Excellent! Keep building that PR foundation!",
+    "🌟 Spot on! You clearly understand stakeholder dynamics.",
+    "🚀 Perfect! That knowledge will serve you well!",
+    "💡 Brilliant! PR professionals think exactly like you!"
+  ],
+  wrong: [
+    "📚 Close! Remember: PR is about building mutual relationships, not just promotion.",
+    "💡 Good try! Focus on the strategic and reputational aspects of PR.",
+    "🔍 Review this one: stakeholder relationships are at the heart of PR.",
+    "📖 Keep going! The next one is yours for sure.",
+    "⚙️ Almost! Think about PR's role in trust and communication."
+  ]
+};
+
+const transitionData = [
+  { emoji:"💼", level:"Section 1 of 4", title:"The Foundations", quote:'"A brand is what people say about you when you\'re not in the room." — Jeff Bezos' },
+  { emoji:"📈", level:"Section 2 of 4", title:"Strategic PR", quote:'"Strategy without tactics is the slowest route to victory." — Sun Tzu' },
+  { emoji:"🔧", level:"Section 3 of 4", title:"Trust & Stakeholders", quote:'"Trust is the glue of life. It\'s the foundational principle that holds all relationships." — Stephen Covey' },
+  { emoji:"🏆", level:"Section 4 of 4", title:"The Ultimate PR Test", quote:'"True public relations is about authenticity and meaningful engagement." — PRSA' }
+];
+
+// ===== STATE =====
+let playerName = "", currentSection = 0, currentQ = 0;
+let score = 0, answered = false;
+let sectionScores = [0,0,0,0];
+let timer, timeLeft;
+const QUESTION_TIME = 20;
+
+// ===== INIT =====
+function spawnFloaters() {
+  const emojis = ["💡","📊","💬","💼","📈","🤔","🚀","📢","🎯","⭐"];
+  const wrap = document.getElementById('bgFloaters');
+  for (let i=0;i<18;i++) {
+    const d = document.createElement('div');
+    d.className = 'floater';
+    d.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    d.style.left = Math.random()*100 + 'vw';
+    d.style.animationDuration = (10+Math.random()*15) + 's';
+    d.style.animationDelay = (-Math.random()*20) + 's';
+    wrap.appendChild(d);
+  }
+}
+spawnFloaters();
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function startGame() {
+  playerName = "Challenger";
+  show('section-select');
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function startSection(idx) {
+  currentSection = idx; currentQ = 0; score = 0;
+  sectionScores = [0,0,0,0];
+  
+  // Shuffle Section 4 questions so they are completely random every time
+  if (idx === 3) {
+    shuffleArray(sections[idx].questions);
+  }
+
+  showTransition(idx);
+}
+
+function goHome() {
+  clearInterval(timer);
+  document.querySelectorAll('.confetti-piece').forEach(c=>c.remove());
+  show('intro');
+}
+
+function showTransition(idx) {
+  const d = transitionData[idx];
+  document.getElementById('transEmoji').textContent = d.emoji;
+  document.getElementById('transLevel').textContent = d.level;
+  document.getElementById('transTitle').textContent = d.title;
+  document.getElementById('transQuote').textContent = d.quote;
+  show('transition');
+  setTimeout(() => { document.getElementById('transBar').style.width = '100%'; }, 100);
+}
+
+function goToQuiz() {
+  document.getElementById('transBar').style.width = '0';
+  currentQ = 0;
+  loadQuestion();
+  show('quiz');
+}
+
+// ===== QUIZ =====
+function loadQuestion() {
+  clearInterval(timer);
+  answered = false;
+  const sec = sections[currentSection];
+  const q = sec.questions[currentQ];
+  const totalInSec = sec.questions.length;
+
+  // Labels
+  document.getElementById('sectionLabel').textContent = sec.label;
+  document.getElementById('qCounter').textContent = `Question ${currentQ+1} of ${totalInSec}`;
+  document.getElementById('qProgressFill').style.width = ((currentQ/totalInSec)*100) + '%';
+
+  // Evolution stage
+  const stage = Math.min(4, Math.floor((currentQ/totalInSec)*5));
+  for(let i=0;i<5;i++) {
+    const el = document.getElementById('evo'+i);
+    el.classList.toggle('active', i<=stage);
+  }
+
+  // Score
+  document.getElementById('scoreDisp').textContent = score;
+
+  // Question
+  document.getElementById('qIcon').textContent = q.icon;
+  document.getElementById('qText').textContent = q.text;
+
+  // Options
+  const grid = document.getElementById('optionsGrid');
+  grid.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span class="opt-text">${opt}</span><span class="opt-feedback"></span>`;
+    btn.onclick = () => selectAnswer(i, q.correct, q);
+    grid.appendChild(btn);
+  });
+
+  // Feedback & next
+  const fb = document.getElementById('feedbackBox');
+  fb.className = 'feedback-box';
+  fb.textContent = '';
+  document.getElementById('btnNext').classList.remove('show');
+
+  // Timer
+  timeLeft = QUESTION_TIME;
+  updateTimer();
+  timer = setInterval(() => {
+    timeLeft--;
+    updateTimer();
+    if(timeLeft <= 0) { clearInterval(timer); timeOut(q.correct); }
+  }, 1000);
+}
+
+function updateTimer() {
+  const el = document.getElementById('timerDisp');
+  el.textContent = timeLeft;
+  el.classList.toggle('urgent', timeLeft <= 5);
+}
+
+function selectAnswer(chosen, correct, q) {
+  if(answered) return;
+  answered = true;
+  clearInterval(timer);
+
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach((b, i) => {
+    b.disabled = true;
+    const fb = b.querySelector('.opt-feedback');
+    if(i === correct) { b.classList.add('correct'); fb.textContent = '✅'; }
+    else if(i === chosen && chosen !== correct) { b.classList.add('wrong'); fb.textContent = '❌'; }
+  });
+
+  const isCorrect = chosen === correct;
+  if(isCorrect) { score++; sectionScores[currentSection]++; }
+
+  const pool = isCorrect ? tips.correct : tips.wrong;
+  const tip = pool[Math.floor(Math.random()*pool.length)];
+  const fb = document.getElementById('feedbackBox');
+  fb.className = 'feedback-box show ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
+  fb.textContent = tip;
+  document.getElementById('scoreDisp').textContent = score;
+  document.getElementById('btnNext').classList.add('show');
+}
+
+function timeOut(correct) {
+  if(answered) return;
+  answered = true;
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach((b, i) => {
+    b.disabled = true;
+    if(i === correct) { b.classList.add('correct'); b.querySelector('.opt-feedback').textContent = '✅'; }
+  });
+  const fb = document.getElementById('feedbackBox');
+  fb.className = 'feedback-box show wrong-fb';
+  fb.textContent = "⏱️ Time's up! The correct answer is highlighted above.";
+  document.getElementById('btnNext').classList.add('show');
+}
+
+function nextQuestion() {
+  currentQ++;
+  const sec = sections[currentSection];
+  if(currentQ >= sec.questions.length) {
+    showEnd();
+  } else {
+    loadQuestion();
+  }
+}
+
+// ===== END =====
+function showEnd() {
+  show('end');
+  const sec = sections[currentSection];
+  document.getElementById('endName').textContent = `${playerName}, Good Job! 🎉`;
+  document.getElementById('endScore').textContent = `${score}/${sec.questions.length}`;
+  document.getElementById('endSubLabel').textContent = `${sec.label} Completed`;
+  document.getElementById('endBreakdown').style.display = 'none';
+  launchConfetti();
+}
+
+function launchConfetti() {
+  const colors = ['#3b82f6','#f97316','#fbbf24','#22c55e','#a78bfa','#f472b6'];
+  for(let i=0;i<80;i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti-piece';
+    c.style.cssText = `
+      left:${Math.random()*100}vw;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      width:${6+Math.random()*10}px;
+      height:${6+Math.random()*10}px;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+      animation-duration:${2+Math.random()*3}s;
+      animation-delay:${Math.random()*1.5}s;
+      top:-20px;
+    `;
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 6000);
+  }
+}
+
+function replayGame() {
+  document.querySelectorAll('.confetti-piece').forEach(c=>c.remove());
+  show('intro');
+}
+
+function shareResult() {
+  const sec = sections[currentSection];
+  const maxScore = sec.questions.length;
+  const pct = Math.round((score/maxScore)*100);
+  const text = `🚀 I just scored ${score}/${maxScore} (${pct}%) on ${sec.label} in PR Quest!\n🏅 Earned the "Future Entrepreneur" badge!\n💼📈🚀 #PRQuest #PublicRelations #FutureEntrepreneur`;
+  if(navigator.share) { navigator.share({ title:'PR Quest Result', text }); }
+  else { navigator.clipboard.writeText(text).then(()=>alert('Result copied to clipboard! Share it anywhere 🚀')); }
+}
+</script>
+</body>
+</html>
